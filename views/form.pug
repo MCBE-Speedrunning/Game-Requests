@@ -1,0 +1,40 @@
+html
+	head
+		title Minecraft Bedrock minigame submission form
+		style.
+			body {
+				width: 75%;
+				margin-left: auto;
+				margin-right: auto;
+			}
+			textarea {
+				width: 25vw;
+			}
+	
+	body
+		if message
+			h1= message
+		h1 Minecraft Bedrock minigame submission form
+		form(action="/", method="POST")
+			h2 Game/Map name
+			input(type="text", name="game")/
+			h2 Download/Website link
+			input(type="text", name="website")/
+			h2 Proposed categories and rules
+			textarea(name="rules")
+				| When timing starts/ends
+				| Additional restrictions
+			h2 Video of a completed run
+			input(type="text", name="video")/
+			h2 Your discord tag and/or speedrun.com username or other ways to contact you. 
+			input(type="text", name="author")/
+			h2 A bit about yourself
+			textarea(name="aboutme")
+				| I am Trollio of the trolls and I roam the lands
+				| ...
+				| And that is how I defeated the great dragon of the east lands. The end
+			h2 Additional notes
+			textarea(name="notes")
+				| No additional notes provided
+			input(type="hidden", name="_csrf", value=csrfToken)/
+			button(type="submit") Submit
