@@ -19,6 +19,7 @@ catch (err)
  */
 const app = express();
 app.set("view engine", "pug");
+app.set('trust proxy', 1);
 app.use(
 	rateLimit({
 		windowMs: 1 * 60 * 1000,
