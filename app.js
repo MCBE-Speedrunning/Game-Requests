@@ -5,33 +5,34 @@ const csurf = require("csurf");
 const fetch = require("node-fetch");
 const fs = require("fs");
 const rateLimit = require("express-rate-limit");
-
 const config = require("./config.json");
+
 let games;
-try {
+try
 	games = require("./games.json");
-} catch (err) {
+catch (err)
 	games = [];
-}
 
+/*
+ * Limit each IP to 10 requests minute,
+ * anyone doing more is likely spamming
+ */
 const app = express();
-
 app.set("view engine", "pug");
-
 app.use(
-	// Limit each IP to 1,000 requests per 1 minute
 	rateLimit({
 		windowMs: 1 * 60 * 1000,
-		max: 10000,
+		max: 10,
 	}),
 );
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
 	session({
-		// Don't save session if unmodified
+		/* Don't save session if unmodified */
 		resave: false,
-		// Don't create session until something stored
+		/* Don't create session until something stored */
 		saveUninitialized: false,
 		secret: config.secret || "hunter2",
 	}),
@@ -54,29 +55,29 @@ app.post("/", async (req, res) => {
 				color: 2424603,
 				fields: [
 					{
-						name: "Game/Map name",
+						name: "Game/Map Name",
 						value: game.game || "No name provided",
 						inline: true,
 					},
 					{
-						name: "Download/Website link",
+						name: "Download/Website Link",
 						value: `[Website](${game.website})`,
 						inline: true,
 					},
 					{
-						name: "Proposed categories and rules",
+						name: "Proposed Categories and Rules",
 						value: game.rules || "No rules provided",
 					},
 					{
-						name: "Video of a completed run",
+						name: "Video of Completed Run",
 						value: `[Video](${game.video})`,
 					},
 					{
-						name: "A bit about yourself",
+						name: "Player Info",
 						value: game.aboutme || "No info provided",
 					},
 					{
-						name: "Additional notes",
+						name: "Additional Notes",
 						value: game.notes || "No Additional notes provided",
 					},
 				],
@@ -86,16 +87,19 @@ app.post("/", async (req, res) => {
 			},
 		],
 	};
-	if(config.webhookURL) {
-	const response = await fetch(config.webhookURL, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify(gameToSave),
-	});
-}
+
+	if (config.webhookURL) {
+		const response = await fetch(config.webhookURL, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(gameToSave),
+		});
+	}
+
 	games.push(gameToSave);
+
 	if (!response.ok) {
 		res
 			.status(response.status)
@@ -105,6 +109,7 @@ app.post("/", async (req, res) => {
 		console.log(await response.json());
 		return;
 	}
+
 	fs.writeFile("./games.json", JSON.stringify(games, null, "\t"), (err) => {
 		if (err) {
 			res
