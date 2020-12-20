@@ -86,6 +86,7 @@ app.post("/", async (req, res) => {
 			},
 		],
 	};
+	if(config.webhookURL) {
 	const response = await fetch(config.webhookURL, {
 		method: "POST",
 		headers: {
@@ -93,6 +94,7 @@ app.post("/", async (req, res) => {
 		},
 		body: JSON.stringify(gameToSave),
 	});
+}
 	games.push(gameToSave);
 	if (!response.ok) {
 		res
