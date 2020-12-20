@@ -1,15 +1,24 @@
 {
-	"name": "form",
+	"name": "game-request-form",
 	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
+	"description": "A game request form for MCBE related leaderboards on speedrun.com",
+	"main": "app.js",
+	"homepage": "https://form.mcbe.wtf",
+	"license": "Unlicense",
+	"private": "true",
+	"repository": {
+		"type": "git",
+		"url": "https://git.mcbe.wtf/MCBE-Speedrunning/Game-Requests.git"
+	},
+	"author": {
+		"name": "Luca Matei Pintillie",
+		"email": "lucafulger@gmail.com",
+		"url": "https://aninternettroll.xyz"
+	},
 	"scripts": {
 		"start": "./app.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
 	"dependencies": {
 		"csurf": "^1.11.0",
 		"express": "^4.17.1",
