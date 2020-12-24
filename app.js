@@ -8,10 +8,11 @@ const rateLimit = require("express-rate-limit");
 const config = require("./config.json");
 
 let games;
-try
+try {
 	games = require("./games.json");
-catch (err)
+} catch (err) {
 	games = [];
+}
 
 /*
  * Limit each IP to 10 requests minute,
@@ -97,19 +98,18 @@ app.post("/", async (req, res) => {
 			},
 			body: JSON.stringify(gameToSave),
 		});
+		if (!response.ok) {
+			res
+				.status(response.status)
+				.send(
+					"Something went wrong, please try again later and let an admin know about this. Thank you!",
+				);
+			console.log(await response.json());
+			return;
+		}
 	}
 
 	games.push(gameToSave);
-
-	if (!response.ok) {
-		res
-			.status(response.status)
-			.send(
-				"Something went wrong, please try again later and let an admin know about this. Thank you!",
-			);
-		console.log(await response.json());
-		return;
-	}
 
 	fs.writeFile("./games.json", JSON.stringify(games, null, "\t"), (err) => {
 		if (err) {
