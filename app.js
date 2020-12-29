@@ -20,12 +20,12 @@ try {
  */
 const app = express();
 app.set("view engine", "pug");
-app.set('trust proxy', 1);
+app.set("trust proxy", 1);
 app.use(
 	rateLimit({
 		windowMs: 1 * 60 * 1000,
 		max: 10,
-	}),
+	})
 );
 
 app.use(express.json());
@@ -37,7 +37,7 @@ app.use(
 		/* Don't create session until something stored */
 		saveUninitialized: false,
 		secret: config.secret || "hunter2",
-	}),
+	})
 );
 app.use(csurf({ cookie: false }));
 
@@ -99,11 +99,9 @@ app.post("/", async (req, res) => {
 			body: JSON.stringify(gameToSave),
 		});
 		if (!response.ok) {
-			res
-				.status(response.status)
-				.send(
-					"Something went wrong, please try again later and let an admin know about this. Thank you!",
-				);
+			res.status(response.status).send(
+				"Something went wrong, please try again later and let an admin know about this. Thank you!"
+			);
 			console.log(await response.json());
 			return;
 		}
@@ -113,15 +111,26 @@ app.post("/", async (req, res) => {
 
 	fs.writeFile("./games.json", JSON.stringify(games, null, "\t"), (err) => {
 		if (err) {
-			res
-				.status(500)
-				.send(
-					"Something went wrong, please try again later and let an admin know about this. Thank you!",
-				);
+			res.status(500).send(
+				"Something went wrong, please try again later and let an admin know about this. Thank you!"
+			);
 			return;
 		}
 	});
-	res.render("form", { csrfToken: req.csrfToken() ,message: "Submission submitted. Please wait up to 3 weeks for a moderator to respond. Thanks!"});
+	res.render("form", {
+		csrfToken: req.csrfToken(),
+		message:
+			"Submission submitted. Please wait up to 3 weeks for a moderator to respond. Thanks!",
+	});
+});
+
+// Error handler
+app.use((err, _req, res, _next) => {
+	res.status(err.status || 500).send(
+		`An unexpected error has occured.
+		This is probably a problem with the website and the moderators got your request.
+		Feel free to send the following output to a moderator. \n${err}`
+	);
 });
 
 app.listen(config.port || 5000);
