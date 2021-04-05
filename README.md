@@ -8,7 +8,11 @@ All fields are optional
 
 ```json
 {
-	"webhookURL": "DISCORD WEBHOOK URL",
+	"webhookURL": {
+		"bedrock": "Discord Webhook URL for bedrock",
+		"other": "Discord Webhook URL for other",
+		"java": "Discord Webhook URL for java"
+	},
 	"port": 5000,
 	"secret": "hunter2"
 }
