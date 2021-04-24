@@ -2,7 +2,7 @@ html(lang="en")
 	head
 		meta(charset="UTF-8")
 		meta(name="viewport", content="width=device-width, initial-scale=1.0")
-		title MCBE LB Requests
+		title MC LB Requests
 		style.
 			body {
 				width: 75%;
@@ -12,18 +12,18 @@ html(lang="en")
 			textarea {
 				width: 25vw;
 			}
-	
+
 	body
 		if message
 			h1= message
-		h1 Minecraft: Bedrock Edition Leaderboard Request Form
+		h1 Minecraft Leaderboard Request Form
 		a(href="https://git.mcbe.wtf/MCBE-Speedrunning/Game-Requests", target="_blank") Git Repository
 		form(action="/", method="POST")
-			h2 Minecraft Edition 
+			h2 Minecraft Edition
 				select(name="edition", required) Edition
-					option(value="bedrock" selected) Bedrock Edition 
+					option(value="bedrock" selected) Bedrock Edition
 					option(value="other") Other
-					option(value="java") Java Edition 
+					option(value="java") Java Edition
 			h2 Game/Map name
 			input(type="text", name="game", required)/
 			h2 Download/Website link
@@ -34,7 +34,7 @@ html(lang="en")
 				| Additional restrictions
 			h2 Video of a completed run
 			input(type="text", name="video", required)/
-			h2 Your discord tag and/or speedrun.com username or other ways to contact you. 
+			h2 Your discord tag and/or speedrun.com username or other ways to contact you.
 			input(type="text", name="author", required)/
 			h2 A bit about yourself
 			textarea(name="aboutme", placeholder="A message about yourself. ", required)
