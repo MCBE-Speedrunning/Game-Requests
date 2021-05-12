@@ -25,26 +25,25 @@ html(lang="en")
 					option(value="other") Other
 					option(value="java") Java Edition
 			h2 Game/Map name
-			input(type="text", name="game", required)/
+			input(type="text", name="game", maxlength=1024, required)/
 			h2 Download/Website link
-			input(type="text", name="website", required)/
+			input(type="text", name="website", maxlength=1024, required)/
 			h2 Proposed categories and rules
-			textarea(name="rules", required)
+			textarea(name="rules", maxlength=1024, required)
 				| When timing starts/ends
 				| Additional restrictions
 			h2 Video of a completed run
-			input(type="text", name="video", required)/
+			input(type="text", name="video", maxlength=1024, required)/
 			h2 Your discord tag and/or speedrun.com username or other ways to contact you.
-			input(type="text", name="author", required)/
+			input(type="text", name="author", maxlength=1024, required)/
 			h2 A bit about yourself
-			textarea(name="aboutme", placeholder="A message about yourself. ", required)
+			textarea(name="aboutme", placeholder="A message about yourself. ", maxlength=1024, required)
 			h2 Additional notes
-			textarea(name="notes", required)
+			textarea(name="notes", maxlength=1024, required)
 				| No additional notes provided
-			h2 Please enter the text below
-			img(src="/captcha.jpg")/
+			h2 What's 9+10?
 			br
-			input(type="text", name="captcha", required)/
+			input(type="text", name="math", maxlength=10, required)/
 			br
 			input(type="hidden", name="_csrf", value=csrfToken)/
 			button(type="submit") Submit

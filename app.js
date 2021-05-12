@@ -6,7 +6,7 @@ const fetch = require("node-fetch");
 const fs = require("fs");
 const rateLimit = require("express-rate-limit");
 const config = require("./config.json");
-const captcha = require("captcha").create({ cookie: config.secret });
+const FormData = require("form-data");
 
 let games;
 try {
@@ -39,7 +39,6 @@ app.use(
 		secret: config.secret || "hunter2",
 	})
 );
-app.get("/captcha.jpg", captcha.image());
 app.use(csurf({ cookie: false }));
 
 app.get("/", (req, res) => {
@@ -47,8 +46,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/", async (req, res) => {
-	if (!captcha.check(req, req.body.captcha))
-		return res.status(401).send("Captcha failed, please try again");
+	if (req.body.math != 19) return res.send("You stupid");
 	const game = req.body;
 	delete game._csrf;
 	delete game.captcha;
@@ -95,6 +93,17 @@ app.post("/", async (req, res) => {
 		],
 	};
 
+	games.push(game);
+	// Firt save the game so in case anything happens we still have a backup
+	fs.writeFile("./games.json", JSON.stringify(games, null, "\t"), (err) => {
+		if (err) {
+			res.status(500).send(
+				"Something went wrong when saving your submission, please try again later and let an admin know about this. Thank you!\n" + JSON.stringify(err, null, 4)
+			);
+			return;
+		}
+	});
+
 	if (config.webhookURL[req.body.edition]) {
 		const response = await fetch(config.webhookURL[req.body.edition], {
 			method: "POST",
@@ -104,36 +113,33 @@ app.post("/", async (req, res) => {
 			body: JSON.stringify(gameToSave),
 		});
 		if (!response.ok) {
-			res.status(response.status).send(
-				"Something went wrong, please try again later and let an admin know about this. Thank you!"
+			return res.status(responseFile.status).send(
+				"Something went wrong when sending your request on discord, but your submission was saved, please try again later and let an admin know about this. Thank you!\n" + await responseFile.text()
 			);
-			console.log(await response.json());
-			return;
 		}
-	}
-
-	games.push(game);
-
-	fs.writeFile("./games.json", JSON.stringify(games, null, "\t"), (err) => {
-		if (err) {
-			res.status(500).send(
-				"Something went wrong, please try again later and let an admin know about this. Thank you!"
-			);
-			return;
-		}
-	});
-	res.render("form", {
-		csrfToken: req.csrfToken(),
-		message:
+		
+		
+		res.render("form", {
+			csrfToken: req.csrfToken(),
+			message:
 			"Submission submitted. Please wait up to 3 weeks for a moderator to respond. Thanks!",
-	});
+		});
+	} else {
+		res.render("form", {
+			csrfToken: req.csrfToken(),
+			message:
+			"No discord webhook found. Submission saved. Please wait up to 3 weeks for a moderator to respond. Thanks!",
+		});
+	}
 });
 
 // Error handler
 app.use((err, _req, res, _next) => {
+	if (err.code == "EBADCSRFTOKEN") return res.status(403).send("Please refresh the page and try again. ");
 	res.status(err.status || 500).send(`An unexpected error has occured.
 		This is probably a problem with the website and the moderators got your request.
 		Feel free to send the following output to a moderator. \n${err}`);
 });
 
-app.listen(config.port || 5000);
+app.listen(config.port || 5000, () => 
+	console.log(`Running at http://localhost:${config.port || 5000}`));
