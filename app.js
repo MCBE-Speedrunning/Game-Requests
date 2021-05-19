@@ -98,7 +98,8 @@ app.post("/", async (req, res) => {
 	fs.writeFile("./games.json", JSON.stringify(games, null, "\t"), (err) => {
 		if (err) {
 			res.status(500).send(
-				"Something went wrong when saving your submission, please try again later and let an admin know about this. Thank you!\n" + JSON.stringify(err, null, 4)
+				"Something went wrong when saving your submission, please try again later and let an admin know about this. Thank you!\n" +
+					JSON.stringify(err, null, 4)
 			);
 			return;
 		}
@@ -113,33 +114,39 @@ app.post("/", async (req, res) => {
 			body: JSON.stringify(gameToSave),
 		});
 		if (!response.ok) {
-			return res.status(responseFile.status).send(
-				"Something went wrong when sending your request on discord, but your submission was saved, please try again later and let an admin know about this. Thank you!\n" + await responseFile.text()
-			);
+			return res
+				.status(responseFile.status)
+				.send(
+					"Something went wrong when sending your request on discord, but your submission was saved, please try again later and let an admin know about this. Thank you!\n" +
+						(await responseFile.text())
+				);
 		}
-		
-		
+
 		res.render("form", {
 			csrfToken: req.csrfToken(),
 			message:
-			"Submission submitted. Please wait up to 3 weeks for a moderator to respond. Thanks!",
+				"Submission submitted. Please wait up to 3 weeks for a moderator to respond. Thanks!",
 		});
 	} else {
 		res.render("form", {
 			csrfToken: req.csrfToken(),
 			message:
-			"No discord webhook found. Submission saved. Please wait up to 3 weeks for a moderator to respond. Thanks!",
+				"No discord webhook found. Submission saved. Please wait up to 3 weeks for a moderator to respond. Thanks!",
 		});
 	}
 });
 
+app.get("/style.css", (req, res) => res.sendFile("style.css", {root: "."}));
+
 // Error handler
 app.use((err, _req, res, _next) => {
-	if (err.code == "EBADCSRFTOKEN") return res.status(403).send("Please refresh the page and try again. ");
+	if (err.code == "EBADCSRFTOKEN")
+		return res.status(403).send("Please refresh the page and try again. ");
 	res.status(err.status || 500).send(`An unexpected error has occured.
 		This is probably a problem with the website and the moderators got your request.
 		Feel free to send the following output to a moderator. \n${err}`);
 });
 
-app.listen(config.port || 5000, () => 
-	console.log(`Running at http://localhost:${config.port || 5000}`));
+app.listen(config.port || 5000, () =>
+	console.log(`Running at http://localhost:${config.port || 5000}`)
+);
